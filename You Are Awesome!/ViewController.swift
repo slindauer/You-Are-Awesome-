@@ -14,7 +14,9 @@ class ViewController: UIViewController {
     
     var imageNumber = -1
     var messageNumber = -1
+    var soundNumber = -1
     let totalImages = 10
+    let totalSounds = 6
     var audioPlayer: AVAudioPlayer!
     
     override func viewDidLoad() {
@@ -22,28 +24,9 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         messageLabel.text = ""
     }
-
     
-    @IBAction func messageButtonPressed(_ sender: UIButton) {
-        // RANDOM IMAGE
-        var newImageNumber: Int
-        repeat {
-            newImageNumber = Int.random(in: 0...totalImages-1)
-        } while newImageNumber == imageNumber
-        imageNumber = newImageNumber
-        imageViewer.image = UIImage(named: "image\(imageNumber)")
-        
-        // RANDOM MESSAGE
-        let messages = ["You are awesome!", "You are great!", "You are da bomb!", "You are fantastic!", "Greatest ever!"]
-        var newMessageNumber: Int
-        repeat {
-            newMessageNumber = Int.random(in: 0...messages.count-1)
-        } while newMessageNumber == messageNumber
-        messageNumber = newMessageNumber
-        messageLabel.text = messages[messageNumber]
-        
-        // PLAY SOUND
-        if let sound = NSDataAsset(name: "sound0"){
+    func playSound(soundName: String) {
+        if let sound = NSDataAsset(name: soundName){
             do {
                 try audioPlayer = AVAudioPlayer(data: sound.data)
                 audioPlayer.play()
@@ -53,6 +36,30 @@ class ViewController: UIViewController {
         } else {
             print("⛔️ ERROR: could not load sound file")
         }
+    }
+    
+    func uniqueInt(oldInt: Int, minVal: Int, maxVal: Int) -> Int {
+        var newInt: Int
+        repeat {
+            newInt = Int.random(in: minVal...maxVal)
+        } while newInt == oldInt
+        return newInt
+    }
+
+    
+    @IBAction func messageButtonPressed(_ sender: UIButton) {
+        // RANDOM IMAGE
+        imageNumber = uniqueInt(oldInt: imageNumber, minVal: 0, maxVal: totalImages-1)
+        imageViewer.image = UIImage(named: "image\(imageNumber)")
+        
+        // RANDOM MESSAGE
+        let messages = ["You are awesome!", "You are great!", "You are da bomb!", "You are fantastic!", "Greatest ever!"]
+        messageNumber = uniqueInt(oldInt: messageNumber, minVal: 0, maxVal: messages.count-1)
+        messageLabel.text = messages[messageNumber]
+        
+        // PLAY SOUND
+        soundNumber = uniqueInt(oldInt: soundNumber, minVal: 0, maxVal: totalSounds-1)
+        playSound(soundName: "sound\(soundNumber)")
         
     }
 }
